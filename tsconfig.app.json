@@ -12,6 +12,7 @@
     "ignoreDeprecations": "6.0",
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",

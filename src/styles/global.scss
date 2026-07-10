@@ -228,3 +228,23 @@ body {
     margin: 0;
   }
 }
+
+.not-found-container {
+  h1 {
+    font-size: 48px;
+    margin: 0 0 8px;
+  }
+
+  h2 {
+    margin: 0 0 12px;
+  }
+
+  a {
+    color: blue;
+    text-decoration: none;
+
+    &:hover {
+      color: #c33200;
+    }
+  }
+}

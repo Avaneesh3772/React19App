@@ -32,8 +32,8 @@ Reuse CSS class names, service names, and variable names from Angular where poss
 | Phase | Description | Status |
 |-------|-------------|--------|
 | **Phase 1** | Scaffold React 19 + Vite + TypeScript + ESLint; install dependencies; Jest setup; folder structure; mock data | **Complete** |
-| **Phase 2** | Header, Footer, Sidebar, AppLayout, empty pages, routes, layout tests | **Next** |
-| **Phase 3** | Dashboard — API + table + user info dialog + tests | Pending |
+| **Phase 2** | Header, Footer, Sidebar, AppLayout, empty pages, routes, layout tests | **Complete** |
+| **Phase 3** | Dashboard — API + table + user info dialog + tests | **Next** |
 | **Phase 4** | Templates — CRUD + dialogs + tests | Pending |
 | **Phase 5** | Restatement — list, detail, mock API + tests | Pending |
 | **Phase 6** | Role — definition tabs, assignment + tests | Pending |
@@ -60,6 +60,12 @@ Reuse CSS class names, service names, and variable names from Angular where poss
 - [x] **webApiClient** — axios base client (maps to Angular `WebApiService`)
 - [x] **Path alias** — `@/` → `src/` (Vite + TypeScript + Jest)
 - [x] **Smoke tests** — 2 tests passing (`App.test.tsx`, `webApiClient.test.ts`)
+- [x] **Phase 2** — App shell, navigation, empty business pages, routing tests
+  - Header, Footer, Sidebar, AppLayout
+  - Empty pages: Dashboard, Templates, Admin (3), Role (2), Restatement (3)
+  - Routes: `/` → `/dashboard`, dynamic `/restatement/track/:id`, 404 page
+  - Navigation config in `shared/constants/navigation.ts` (no RxJS/Signals)
+  - **8 tests passing** (layout + routing)
 - [x] Architecture decisions documented:
   - **UI:** MUI (Material UI) — no Bootstrap
   - **Server state:** TanStack React Query
@@ -68,14 +74,13 @@ Reuse CSS class names, service names, and variable names from Angular where poss
   - **Testing:** Jest + React Testing Library
   - **Folder structure:** Feature-based (`features/`, `shared/`, `app/`)
 
-### Next steps (Phase 2)
+### Next steps (Phase 3)
 
-- [ ] Create Header, Footer, Sidebar components
-- [ ] Create AppLayout shell (header + sidebar + content + footer)
-- [ ] Add empty placeholder pages for all business routes
-- [ ] Wire full navigation matching Angular19App (no RxJS/Signals)
-- [ ] Redirect `/` → `/dashboard`
-- [ ] Layout and routing tests
+- [ ] Dashboard service + React Query hook
+- [ ] User table from JSONPlaceholder
+- [ ] User info dialog on row click
+- [ ] Loading and error states
+- [ ] Dashboard unit tests
 
 ---
 
@@ -94,7 +99,7 @@ Reuse CSS class names, service names, and variable names from Angular where poss
 | Forms | react-hook-form + zod | Installed (used in Phase 7) |
 | Dates | dayjs + MUI X Date Pickers | Installed (used in Phase 7) |
 | Styles | SCSS (sass) | Installed |
-| Unit tests | Jest + React Testing Library | Configured — 2 tests passing |
+| Unit tests | Jest + React Testing Library | Configured — **8 tests passing** |
 | API mocking (tests) | MSW | Installed |
 | E2E (future) | Playwright or Cypress | Not planned yet |
 
@@ -281,36 +286,73 @@ npm list --depth=0
 src/
 ├── app/
 │   ├── App.tsx                 # Root component — providers + router
-│   ├── App.test.tsx            # App smoke test
+│   ├── App.test.tsx            # App shell smoke test
 │   ├── AppProviders.tsx        # MUI Theme + React Query providers
 │   ├── queryClient.ts          # TanStack Query client instance
-│   ├── pages/
-│   │   └── Phase1Home.tsx      # Temporary home (replaced in Phase 2)
 │   ├── router/
-│   │   └── AppRouter.tsx       # Route definitions
+│   │   ├── AppRouter.tsx       # All business route definitions
+│   │   └── AppRouter.test.tsx  # Routing and navigation tests
 │   └── theme/
 │       └── theme.ts            # MUI theme
-├── features/                   # Business modules (Phase 2+)
+├── features/
 │   ├── dashboard/
+│   │   └── Dashboard.tsx
 │   ├── templates/
+│   │   └── Templates.tsx
 │   ├── admin/
+│   │   ├── CloseQuarter.tsx
+│   │   ├── LeCalculation.tsx
+│   │   └── RoundingModelCalculation.tsx
 │   ├── role/
+│   │   ├── RoleDefinition.tsx
+│   │   └── RoleAssignment.tsx
 │   └── restatement/
+│       ├── InitiateAndDefine.tsx
+│       ├── TrackAndAction.tsx
+│       └── Track.tsx           # Dynamic route — /restatement/track/:id
 ├── shared/
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.tsx
+│   │   │   ├── Header.test.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Footer.test.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── Sidebar.test.tsx
+│   │   │   └── AppLayout.tsx   # Shell — header + sidebar + outlet + footer
+│   │   ├── PageShell.tsx       # Reusable empty page wrapper
+│   │   └── PageNotFound.tsx
+│   ├── constants/
+│   │   └── navigation.ts       # Sidebar menu config
 │   ├── api/
-│   │   ├── webApiClient.ts     # axios HTTP client (Angular WebApiService)
+│   │   ├── webApiClient.ts
 │   │   └── webApiClient.test.ts
 │   ├── testing/
-│   │   └── renderWithProviders.tsx  # Test helper with providers
+│   │   └── renderWithProviders.tsx
 │   └── types/
 │       └── appConfiguration.ts
-├── assets/
-│   └── mockData/               # JSON mock files from Angular19App
-├── styles/
-│   └── global.scss             # Global styles (ported from Angular)
-├── setupTests.ts               # Jest setup (jest-dom, TextEncoder polyfill)
-└── main.tsx                    # Entry point
+├── assets/mockData/            # JSON mock files from Angular19App
+├── styles/global.scss
+├── setupTests.ts
+└── main.tsx
 ```
+
+### Application routes (Phase 2)
+
+| Route | Component |
+|-------|-----------|
+| `/` | Redirects to `/dashboard` |
+| `/dashboard` | Dashboard |
+| `/templates` | Templates |
+| `/admin/close-quarter` | CloseQuarter |
+| `/admin/le-calculation` | LeCalculation |
+| `/admin/rounding-model-calculation` | RoundingModelCalculation |
+| `/role/role-definition` | RoleDefinition |
+| `/role/role-assignment` | RoleAssignment |
+| `/restatement/initiate-and-define` | InitiateAndDefine |
+| `/restatement/track-and-action` | TrackAndAction |
+| `/restatement/track/:id` | Track |
+| `*` | PageNotFound (404) |
 
 ---
 
@@ -332,16 +374,18 @@ npm run test:coverage    # Run tests with coverage report
 
 ---
 
-## Planned folder structure (Phase 2+ additions)
+## Planned folder structure (Phase 3+ additions)
+
+Phase 3 will add to `features/dashboard/`:
 
 ```
-src/
-├── app/                    # App bootstrap, providers, router
-├── features/               # Business modules (dashboard, templates, admin, role, restatement)
-├── shared/                 # Header, Footer, Sidebar, API client, utils, test helpers
-├── assets/mockData/        # JSON mock files (from Angular19App)
-├── styles/                 # Global SCSS
-└── main.tsx
+features/dashboard/
+├── Dashboard.tsx
+├── api/
+│   ├── dashboardService.ts
+│   └── useDashboardUsers.ts
+└── components/
+    └── UserInfoDialog.tsx
 ```
 
 ---
@@ -389,7 +433,7 @@ npm run test:watch
 npm run test:coverage
 ```
 
-Current status: **2 tests passing** (App shell + webApiClient).
+Current status: **8 tests passing** (App shell, layout, routing, webApiClient).
 
 ---
 
@@ -401,4 +445,4 @@ This README is updated as the project progresses:
 - Phase completed → updated in **Development phases** and **Progress log**
 - Architecture decisions → documented in **Tech stack**
 
-*Last updated: July 11, 2026 — Phase 1 complete. Phase 2 (layout + navigation) is next.*
+*Last updated: July 11, 2026 — Phase 2 complete. Phase 3 (Dashboard) is next.*
