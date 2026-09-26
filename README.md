@@ -31,8 +31,8 @@ Reuse Angular CSS class names, service names, and variable names where it helps.
 | **1** | Workspace — Vite + React 19 + TypeScript + ESLint + SCSS | **Complete** |
 | **2** | Core libraries (Router, MUI, axios, React Query) | **Complete** |
 | **3** | Testing stack (Jest + React Testing Library) | **Complete** |
-| **4** | Health check (`dev`, `lint`, `build`, `test`) | **Next** |
-| **5** | Folder structure + Header/Footer/Sidebar + empty pages | Pending |
+| **4** | Health check (`dev`, `lint`, `build`, `test`) | **Complete** |
+| **5** | Folder structure + Header/Footer/Sidebar + empty pages | **Next** |
 | **6** | Shared foundation (`webApiClient`, theme, mock JSON) | Pending |
 | **7** | Dashboard module | Pending |
 | **8** | Templates module | Pending |
@@ -203,16 +203,34 @@ npm test
 
 ---
 
-## Step 4 — health check (next)
+## Step 4 — health check (complete)
 
-**Goal:** You run all scripts yourself. No new packages.
+**Goal:** Run all existing scripts. No new packages or source files.
 
-| Command | Expected |
-|---------|----------|
-| `npm run dev` | Landing page in the browser |
-| `npm run lint` | No errors |
-| `npm run build` | `dist/` created |
-| `npm test` | 1 passed |
+### Packages added
+
+| Package | In one sentence | Angular equivalent |
+|---------|-----------------|-------------------|
+| *(none)* | Step 4 only verifies the project | `ng serve` / `ng test` / `ng build` |
+
+### Files added or changed
+
+| File | Purpose |
+|------|---------|
+| *(none in `src/`)* | README updated with results |
+
+### Commands
+
+| Command | Result |
+|---------|--------|
+| `npm run lint` | Passed (no ESLint errors) |
+| `npm run build` | Passed — Vite built `dist/` |
+| `npm test` | Passed — 1 test (`Get started` heading) |
+| `npm run dev` | Landing page at http://localhost:5173 |
+
+### Notes
+
+- Foundation (Steps 1–3) is healthy. Next step adds real app structure and empty pages.
 
 ---
 
@@ -299,4 +317,4 @@ src/App.tsx      → Vite landing page (“Get started”)
 
 ---
 
-*Last updated: September 26, 2026 — README now uses the same tables for every step. Next: Step 4 (health check).*
+*Last updated: September 26, 2026 — Step 4 complete. Next: Step 5 (folder structure + empty shell).*
