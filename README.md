@@ -6,13 +6,11 @@ A **React 19** learning application that rebuilds the **business modules** of [A
 
 **Excluded:** RxJS Learning and Signals Learning pages (Angular-only).
 
-**Working rule:** Discuss each step in detail → implement → update this README.
+**Working rule:** Discuss each step → implement → update this README with the same tables (packages, files, commands).
 
 ---
 
 ## End goal
-
-Same navigation and features as Angular19App (business modules only):
 
 | Module | Routes |
 |--------|--------|
@@ -22,9 +20,7 @@ Same navigation and features as Angular19App (business modules only):
 | **Role** | `/role/role-definition`, `/role/role-assignment` |
 | **Restatement** | `/restatement/initiate-and-define`, `/restatement/track-and-action`, `/restatement/track/:id` |
 
-Reuse Angular CSS class names, service names, and variable names where it helps. Use enterprise-style React patterns (TypeScript, ESLint, feature folders, tests).
-
-Default route (planned): `/dashboard`.
+Reuse Angular CSS class names, service names, and variable names where it helps.
 
 ---
 
@@ -34,8 +30,8 @@ Default route (planned): `/dashboard`.
 |------|------|--------|
 | **1** | Workspace — Vite + React 19 + TypeScript + ESLint + SCSS | **Complete** |
 | **2** | Core libraries (Router, MUI, axios, React Query) | **Complete** |
-| **3** | Testing stack (Jest + React Testing Library) | **Next** |
-| **4** | Health check (`dev`, `lint`, `build`, `test`) | Pending |
+| **3** | Testing stack (Jest + React Testing Library) | **Complete** |
+| **4** | Health check (`dev`, `lint`, `build`, `test`) | **Next** |
 | **5** | Folder structure + Header/Footer/Sidebar + empty pages | Pending |
 | **6** | Shared foundation (`webApiClient`, theme, mock JSON) | Pending |
 | **7** | Dashboard module | Pending |
@@ -44,231 +40,263 @@ Default route (planned): `/dashboard`.
 | **10** | Role module | Pending |
 | **11** | Admin module (forms) | Pending |
 | **12** | Auth, guards, interceptor, lazy load | Pending |
-| **13** | Full regression + this README polish | Pending |
+| **13** | Full regression + README polish | Pending |
 
 ---
 
-## Why Vite?
+## How we document each step
 
-This app is a **client-side SPA**, like Angular19App (`ng serve` + router). Vite + React Router is the closest match.
+Every completed step in this README uses the same tables:
 
-Large banks (including RBC) use a **mix**: Angular/Webpack, React + Next.js, and sometimes Vite. Vite is not “the official RBC standard.” It is a valid, modern SPA toolchain. We chose it to stay close to the Angular reference, not because every bank app uses Vite.
+| Table | What it answers |
+|-------|-----------------|
+| **Packages added** | What we installed, in one sentence, plus Angular equivalent |
+| **Files added or changed** | What appeared in the repo |
+| **Commands** | What you ran |
+| **Notes** | Decisions (e.g. MUI vs Ant Design) |
 
-| Angular | This project (Vite) | CRA (legacy) |
-|---------|---------------------|--------------|
-| `ng new` | `npm create vite@latest` | `create-react-app` |
-| `ng serve` / `npm start` | `npm run dev` / `npm start` | `npm start` (port 3000) |
-| `ng build` | `npm run build` | `npm run build` |
-| `ng lint` | `npm run lint` | `npm run lint` (if configured) |
-
----
-
-## Step 1 — what we did
-
-- Emptied the folder (kept `.git`) and scaffolded a new app
-- React **19.3.0** + TypeScript + ESLint + Vite 8
-- Installed `sass` for SCSS
-- Replaced Vite `index.css` / `App.css` with `src/styles/global.scss` and `src/App.scss`
-- Added `npm start` (same habit as Angular)
-- Verified `npm run lint`, `npm run build`, `npm run dev`
-- Landing page works at [http://localhost:5173](http://localhost:5173)
-- Pushed to GitHub
-
-### Step 1 commands (reproduce from an empty folder with `.git`)
-
-```bash
-cd "c:/Avaneesh Projects/React19App"
-
-npm create vite@latest . -- --template react-ts --eslint
-npm install
-npm install sass
-npm pkg set scripts.start="vite"
-
-npm list react --depth=0
-npm run lint
-npm run build
-npm run dev
-```
-
-If Vite asks which linter, choose **ESLint**.
-
-### What each command means
-
-| Command | Purpose |
-|---------|---------|
-| `npm create vite@latest . -- --template react-ts --eslint` | Create React + TypeScript + ESLint project in the current folder |
-| `npm install` | Install packages from `package.json` into `node_modules` |
-| `npm install sass` | Enable `.scss` files (Vite compiles them) |
-| `npm pkg set scripts.start="vite"` | Add `npm start` (same as `npm run dev`) |
-| `npm list react --depth=0` | Confirm React 19 is installed |
-| `npm run lint` | Run ESLint |
-| `npm run build` | Typecheck + production bundle → `dist/` |
-| `npm run dev` | Start dev server (hot reload) |
-
-### CRA / Webpack / Nx equivalents (learning reference)
-
-| Job | Vite (this repo) | Create React App | Custom Webpack | Nx |
-|-----|------------------|------------------|----------------|-----|
-| Create app | `npm create vite@latest . -- --template react-ts --eslint` | `npx create-react-app . --template typescript` | Write `webpack.config.js` yourself | `npx create-nx-workspace@latest` |
-| Install | `npm install` | `npm install` | `npm install` + webpack loaders | `npm install` at workspace root |
-| SCSS | `npm install sass` | `npm install sass` | `sass` + `sass-loader` | `npm install sass` |
-| Dev server | `npm run dev` (port 5173) | `npm start` (port 3000) | `webpack serve` | `nx serve <app>` |
-| Lint | `npm run lint` | `npm run lint` (if set) | `eslint` after you configure it | `nx lint <app>` |
-| Build | `npm run build` → `dist/` | `npm run build` → `build/` | `webpack --mode production` | `nx build <app>` |
-
-CRA is deprecated for new projects. Nx is for monorepos (many apps in one repo).
-
----
-
-## Step 2 — core libraries (complete)
-
-**Goal:** Install routing, MUI, HTTP, and React Query. Do **not** wire providers or replace the landing page yet.
-
-**Done:** Packages installed. `npm run lint` and `npm run build` passed. Landing page unchanged.
-
-**UI decision:** **MUI (Material UI)** + `@mui/icons-material` — closest to Angular Material. We compared MUI, Ant Design, shadcn/ui, Chakra UI, and Mantine. Forms/dates wait until Step 11.
-
-### Step 2 commands
-
-```bash
-cd "c:/Avaneesh Projects/React19App"
-
-npm install react-router-dom @mui/material @emotion/react @emotion/styled @mui/icons-material axios @tanstack/react-query
-```
-
-Then verify:
-
-```bash
-npm list react-router-dom @mui/material axios @tanstack/react-query --depth=0
-npm run lint
-npm run build
-```
-
-`npm run dev` should still show the same Vite landing page.
-
-### What each package is for
-
-| Package | Purpose | Angular equivalent |
-|---------|---------|-------------------|
-| `react-router-dom` | Client-side routes (`/dashboard`, `/admin/...`) | `@angular/router` |
-| `@mui/material` | UI — Table, Dialog, Tabs, Button, TextField | Angular Material |
-| `@emotion/react` | Required by MUI (styling engine) | Material theming |
-| `@emotion/styled` | Required by MUI (styled components) | Material theming |
-| `@mui/icons-material` | Material icons (`account_balance`, `account_circle`) | Material Icons |
-| `axios` | HTTP GET/POST/PUT/DELETE | `HttpClient` |
-| `@tanstack/react-query` | API loading, error, cache, refetch | HTTP + RxJS in services |
-
-### Not installed in Step 2
-
-| Package | When |
-|---------|------|
-| `react-hook-form`, `zod`, `@hookform/resolvers` | Step 11 (Admin forms) |
-| `dayjs`, `@mui/x-date-pickers` | Step 11 |
-| Jest + Testing Library | Step 3 |
-| `@tanstack/react-query-devtools`, `msw` | Later (API / tests) |
-
----
-
-## Installed so far
-
-### Production (Steps 1–2)
-
-| Package | Version | Purpose | Step |
-|---------|---------|---------|------|
-| `react` | ^19.2.8 | UI library | 1 |
-| `react-dom` | ^19.2.8 | Renders React into the browser | 1 |
-| `sass` | ^1.105.0 | Compile SCSS | 1 |
-| `react-router-dom` | ^7.18.4 | Client-side routing | 2 |
-| `@mui/material` | ^9.4.0 | UI components | 2 |
-| `@mui/icons-material` | ^9.4.0 | Material icons | 2 |
-| `@emotion/react` | ^11.14.0 | MUI styling engine | 2 |
-| `@emotion/styled` | ^11.14.1 | MUI styled API | 2 |
-| `axios` | ^1.20.0 | HTTP client | 2 |
-| `@tanstack/react-query` | ^5.104.0 | Server/API state | 2 |
-
-### Development (Step 1)
-
-| Package | Purpose |
-|---------|---------|
-| `vite` | Dev server and production bundler |
-| `@vitejs/plugin-react` | React support in Vite |
-| `typescript` | Static types |
-| `eslint` + plugins | Linting |
-| `@types/react`, `@types/react-dom`, `@types/node` | TypeScript types |
-
-**Later:** Jest (Step 3), react-hook-form + zod + dayjs (Step 11).
+Future steps have a short **planned** table so you can see what is coming.
 
 ---
 
 ## Getting started
 
-### Prerequisites
-
-- Node.js 18+
-- npm
-
-### Install (fresh clone)
-
 ```bash
 npm install
-```
-
-### Run
-
-```bash
 npm run dev
-# or
-npm start
+# or: npm start
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
 
-### Other scripts
-
 | Command | Purpose |
 |---------|---------|
+| `npm start` / `npm run dev` | Dev server (Vite, port 5173) |
 | `npm run lint` | ESLint |
-| `npm run build` | Production build → `dist/` |
+| `npm run build` | Typecheck + production bundle → `dist/` |
 | `npm run preview` | Preview the production build |
-| `npm test` | Not available until Step 3 (Jest) |
+| `npm test` | Jest unit tests |
+| `npm run test:watch` | Re-run tests on file change |
 
 ---
 
-## How the app boots (Step 1)
+## Step 1 — workspace (complete)
 
+**Goal:** Create a Vite + React 19 + TypeScript + ESLint app and switch styles to SCSS.
+
+### Packages added
+
+| Package | In one sentence | Angular equivalent |
+|---------|-----------------|-------------------|
+| `react` | UI library (19.x) | `@angular/core` |
+| `react-dom` | Puts React onto the page | Browser bootstrap |
+| `sass` | Compile `.scss` files | Angular component/global SCSS |
+| `vite` | Dev server and bundler | Angular CLI (`ng serve` / `ng build`) |
+| `typescript` | Static types | TypeScript in Angular |
+| `eslint` + plugins | Lint the code | `ng lint` |
+
+### Files added or changed
+
+| File | Purpose |
+|------|---------|
+| `index.html` | Only HTML page — `<div id="root">` |
+| `src/main.tsx` | Starts React (like `main.ts`) |
+| `src/App.tsx` | Landing page component |
+| `src/styles/global.scss` | App-wide styles (replaced `index.css`) |
+| `src/App.scss` | Landing page styles (replaced `App.css`) |
+| `package.json` | Scripts and dependencies |
+| `vite.config.ts` | Vite settings |
+| `tsconfig*.json` | TypeScript (app + Node/Vite) |
+| `eslint.config.js` | Lint rules |
+| `.vscode/settings.json` | Use workspace TypeScript 6 |
+
+### Commands
+
+```bash
+npm create vite@latest . -- --template react-ts --eslint
+npm install
+npm install sass
+npm pkg set scripts.start="vite"
+npm run lint
+npm run build
+npm run dev
 ```
-index.html          → <div id="root">
-src/main.tsx        → createRoot(...).render(<App />)
-src/App.tsx         → current landing page (Vite welcome UI)
-```
 
-Same idea as Angular `index.html` → `main.ts` → `AppComponent`.
+### Notes
 
-### Important files (current codebase)
-
-| File | Role | Angular equivalent |
-|------|------|-------------------|
-| `index.html` | The only HTML page. Contains `<div id="root">` and loads `main.tsx`. | `src/index.html` |
-| `src/main.tsx` | Starts React and mounts `<App />` into `#root`. | `src/main.ts` (`bootstrapApplication`) |
-| `src/App.tsx` | Root component — the landing page you see in the browser. | `AppComponent` |
-| `src/styles/global.scss` | App-wide styles (imported from `main.tsx`). | `src/styles.scss` |
-| `src/App.scss` | Styles for the landing page component. | Component `.scss` |
-| `package.json` | Scripts and dependencies. | Angular `package.json` |
-| `vite.config.ts` | Vite dev server and build settings. | `angular.json` (build/serve) |
-| `tsconfig.app.json` | TypeScript rules for app code. | `tsconfig.app.json` |
-| `eslint.config.js` | Lint rules. | Angular ESLint / `ng lint` |
-| `public/` | Static files (favicon, `icons.svg`) copied as-is. | `public/` |
-| `.gitignore` | Keeps `node_modules` and `dist` out of Git. | `.gitignore` |
+- Vite is closest to Angular SPA. Banks also use Next.js / Webpack; we chose Vite to match [Angular19App](https://github.com/Avaneesh3772/Angular19App).
+- Folder structure is still the Vite starter (enterprise folders come in Step 5).
 
 ---
 
-## README update policy
+## Step 2 — core libraries (complete)
 
-After **every step** this file is updated with:
+**Goal:** Install routing, MUI, HTTP, and React Query. **Do not** wire them into the UI yet.
 
-- Step status in the plan table
-- Commands run and what they mean
-- Packages added and why
-- How to run / test the app
+### Packages added
 
-*Last updated: September 26, 2026 — Step 2 complete. Next: Step 3 (Jest + React Testing Library).*
+| Package | In one sentence | Angular equivalent |
+|---------|-----------------|-------------------|
+| `react-router-dom` | Pages and URLs (`/dashboard`, `/admin/...`) | `@angular/router` |
+| `@mui/material` | Tables, dialogs, tabs, buttons | Angular Material |
+| `@emotion/react` + `@emotion/styled` | Required by MUI for styling | Material theming |
+| `@mui/icons-material` | Same Material icons as Angular (`account_balance`, etc.) | Material Icons |
+| `axios` | HTTP GET/POST/PUT/DELETE | `HttpClient` + `WebApiService` |
+| `@tanstack/react-query` | Loading / error / cache / refetch for APIs | Services + RxJS for HTTP data |
+
+### Files added or changed
+
+| File | Purpose |
+|------|---------|
+| `package.json` / `package-lock.json` | New dependencies only — no new `src` files |
+
+### Commands
+
+```bash
+npm install react-router-dom @mui/material @emotion/react @emotion/styled @mui/icons-material axios @tanstack/react-query
+npm run lint
+npm run build
+```
+
+### Notes
+
+- **UI library decision:** MUI (not Ant Design, shadcn/ui, Chakra, or Mantine) — closest to Angular Material.
+- Forms/dates (`react-hook-form`, `zod`, `dayjs`) wait until **Step 11**.
+
+---
+
+## Step 3 — testing (complete)
+
+**Goal:** Jest + React Testing Library and **one** landing-page test.
+
+### Packages added
+
+| Package | In one sentence | Angular equivalent |
+|---------|-----------------|-------------------|
+| `jest` | The test runner (`npm test`) | Jasmine + Karma |
+| `@types/jest` | TypeScript knows `describe`, `it`, `expect` | Jasmine types |
+| `jest-environment-jsdom` | Fake browser so we can render HTML in Node | Karma + Chrome |
+| `ts-jest` | Lets Jest run `.tsx` files | `ts-jest` / Angular test compiler |
+| `@testing-library/react` | `render()`, `screen.getByText()` | `TestBed` + queries |
+| `@testing-library/jest-dom` | `toBeInTheDocument()` | DOM matchers |
+| `@testing-library/user-event` | Later: click/type like a user | User events in specs |
+| `jest-transform-stub` | Ignore `.scss` / images in tests so Jest does not crash | Style mocks |
+
+### Files added or changed
+
+| File | Purpose |
+|------|---------|
+| `jest.config.ts` | Jest settings |
+| `tsconfig.jest.json` | TypeScript for tests only |
+| `src/setupTests.ts` | Load jest-dom |
+| `src/App.test.tsx` | One test: heading “Get started” |
+| `package.json` | Scripts `test` and `test:watch` |
+
+### Commands
+
+```bash
+npm install -D jest @types/jest jest-environment-jsdom ts-jest @testing-library/react @testing-library/jest-dom @testing-library/user-event jest-transform-stub
+npm test
+```
+
+**Result:** 1 test passed.
+
+---
+
+## Step 4 — health check (next)
+
+**Goal:** You run all scripts yourself. No new packages.
+
+| Command | Expected |
+|---------|----------|
+| `npm run dev` | Landing page in the browser |
+| `npm run lint` | No errors |
+| `npm run build` | `dist/` created |
+| `npm test` | 1 passed |
+
+---
+
+## Step 5 — planned (empty shell)
+
+| Will add | Purpose |
+|----------|---------|
+| `src/app/`, `src/features/`, `src/shared/` | Enterprise folder structure |
+| Header, Footer, Sidebar, AppLayout | Same shell as Angular |
+| Empty pages (`<h2>` only) | Dashboard, Templates, Admin, Role, Restatement |
+| Routes | `/` → `/dashboard`, 404 |
+
+---
+
+## Step 6 — planned (shared foundation)
+
+| Will add | Purpose | Angular equivalent |
+|----------|---------|-------------------|
+| `webApiClient` | Shared axios wrapper | `WebApiService` |
+| MUI theme + QueryClient providers | App-wide setup | `app.config.ts` |
+| Business mock JSON | Config / admin / role data | `src/assets/mockData/` |
+
+---
+
+## Steps 7–13 — planned (modules)
+
+| Step | Module | Planned work |
+|------|--------|----------------|
+| **7** | Dashboard | JSONPlaceholder users table + dialog + tests |
+| **8** | Templates | Posts CRUD + dialogs + tests |
+| **9** | Restatement | Initiate & Define, Track & Action, `/track/:id` |
+| **10** | Role | Definition tabs + assignment |
+| **11** | Admin | Forms: `react-hook-form` + `zod` + `dayjs` |
+| **12** | Cross-cutting | Auth interceptor, guards, lazy load |
+| **13** | Sign-off | Full test + README polish |
+
+Each of these will get the same **Packages / Files / Commands** tables when we finish that step.
+
+---
+
+## All packages (running list)
+
+### Production
+
+| Package | Version | In one sentence | Step |
+|---------|---------|-----------------|------|
+| `react` | ^19.2.8 | UI library | 1 |
+| `react-dom` | ^19.2.8 | Renders React in the browser | 1 |
+| `sass` | ^1.105.0 | Compile SCSS | 1 |
+| `react-router-dom` | ^7.18.4 | Pages and URLs | 2 |
+| `@mui/material` | ^9.4.0 | Tables, dialogs, tabs, buttons | 2 |
+| `@mui/icons-material` | ^9.4.0 | Material icons | 2 |
+| `@emotion/react` | ^11.14.0 | Required by MUI | 2 |
+| `@emotion/styled` | ^11.14.1 | Required by MUI | 2 |
+| `axios` | ^1.20.0 | HTTP GET/POST/PUT/DELETE | 2 |
+| `@tanstack/react-query` | ^5.104.0 | API loading, cache, refetch | 2 |
+
+### Development
+
+| Package | In one sentence | Step |
+|---------|-----------------|------|
+| `vite` + `@vitejs/plugin-react` | Dev server and React plugin | 1 |
+| `typescript` | Static types | 1 |
+| `eslint` + plugins | Lint | 1 |
+| `@types/react`, `@types/react-dom`, `@types/node` | TypeScript types | 1 |
+| `jest` | Test runner | 3 |
+| `@types/jest` | Jest TypeScript types | 3 |
+| `jest-environment-jsdom` | Fake browser for tests | 3 |
+| `ts-jest` | Run TSX in Jest | 3 |
+| `@testing-library/react` | Render components in tests | 3 |
+| `@testing-library/jest-dom` | `toBeInTheDocument()` | 3 |
+| `@testing-library/user-event` | Click/type in tests | 3 |
+| `jest-transform-stub` | Stub SCSS/images in tests | 3 |
+
+---
+
+## How the app boots (today)
+
+```
+index.html       → <div id="root">
+src/main.tsx     → createRoot(...).render(<App />)
+src/App.tsx      → Vite landing page (“Get started”)
+```
+
+---
+
+*Last updated: September 26, 2026 — README now uses the same tables for every step. Next: Step 4 (health check).*
