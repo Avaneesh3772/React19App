@@ -33,8 +33,8 @@ Default route (planned): `/dashboard`.
 | Step | Name | Status |
 |------|------|--------|
 | **1** | Workspace — Vite + React 19 + TypeScript + ESLint + SCSS | **Complete** |
-| **2** | Core libraries (Router, MUI, axios, React Query) | Next |
-| **3** | Testing stack (Jest + React Testing Library) | Pending |
+| **2** | Core libraries (Router, MUI, axios, React Query) | **Complete** |
+| **3** | Testing stack (Jest + React Testing Library) | **Next** |
 | **4** | Health check (`dev`, `lint`, `build`, `test`) | Pending |
 | **5** | Folder structure + Header/Footer/Sidebar + empty pages | Pending |
 | **6** | Shared foundation (`webApiClient`, theme, mock JSON) | Pending |
@@ -120,17 +120,73 @@ CRA is deprecated for new projects. Nx is for monorepos (many apps in one repo).
 
 ---
 
-## Installed so far (Step 1)
+## Step 2 — core libraries (complete)
 
-### Production
+**Goal:** Install routing, MUI, HTTP, and React Query. Do **not** wire providers or replace the landing page yet.
 
-| Package | Purpose |
-|---------|---------|
-| `react` | UI library (19.x) |
-| `react-dom` | Renders React into the browser |
-| `sass` | Compile SCSS |
+**Done:** Packages installed. `npm run lint` and `npm run build` passed. Landing page unchanged.
 
-### Development
+**UI decision:** **MUI (Material UI)** + `@mui/icons-material` — closest to Angular Material. We compared MUI, Ant Design, shadcn/ui, Chakra UI, and Mantine. Forms/dates wait until Step 11.
+
+### Step 2 commands
+
+```bash
+cd "c:/Avaneesh Projects/React19App"
+
+npm install react-router-dom @mui/material @emotion/react @emotion/styled @mui/icons-material axios @tanstack/react-query
+```
+
+Then verify:
+
+```bash
+npm list react-router-dom @mui/material axios @tanstack/react-query --depth=0
+npm run lint
+npm run build
+```
+
+`npm run dev` should still show the same Vite landing page.
+
+### What each package is for
+
+| Package | Purpose | Angular equivalent |
+|---------|---------|-------------------|
+| `react-router-dom` | Client-side routes (`/dashboard`, `/admin/...`) | `@angular/router` |
+| `@mui/material` | UI — Table, Dialog, Tabs, Button, TextField | Angular Material |
+| `@emotion/react` | Required by MUI (styling engine) | Material theming |
+| `@emotion/styled` | Required by MUI (styled components) | Material theming |
+| `@mui/icons-material` | Material icons (`account_balance`, `account_circle`) | Material Icons |
+| `axios` | HTTP GET/POST/PUT/DELETE | `HttpClient` |
+| `@tanstack/react-query` | API loading, error, cache, refetch | HTTP + RxJS in services |
+
+### Not installed in Step 2
+
+| Package | When |
+|---------|------|
+| `react-hook-form`, `zod`, `@hookform/resolvers` | Step 11 (Admin forms) |
+| `dayjs`, `@mui/x-date-pickers` | Step 11 |
+| Jest + Testing Library | Step 3 |
+| `@tanstack/react-query-devtools`, `msw` | Later (API / tests) |
+
+---
+
+## Installed so far
+
+### Production (Steps 1–2)
+
+| Package | Version | Purpose | Step |
+|---------|---------|---------|------|
+| `react` | ^19.2.8 | UI library | 1 |
+| `react-dom` | ^19.2.8 | Renders React into the browser | 1 |
+| `sass` | ^1.105.0 | Compile SCSS | 1 |
+| `react-router-dom` | ^7.18.4 | Client-side routing | 2 |
+| `@mui/material` | ^9.4.0 | UI components | 2 |
+| `@mui/icons-material` | ^9.4.0 | Material icons | 2 |
+| `@emotion/react` | ^11.14.0 | MUI styling engine | 2 |
+| `@emotion/styled` | ^11.14.1 | MUI styled API | 2 |
+| `axios` | ^1.20.0 | HTTP client | 2 |
+| `@tanstack/react-query` | ^5.104.0 | Server/API state | 2 |
+
+### Development (Step 1)
 
 | Package | Purpose |
 |---------|---------|
@@ -140,7 +196,7 @@ CRA is deprecated for new projects. Nx is for monorepos (many apps in one repo).
 | `eslint` + plugins | Linting |
 | `@types/react`, `@types/react-dom`, `@types/node` | TypeScript types |
 
-**Not installed yet (Step 2+):** react-router-dom, MUI, axios, TanStack Query, Jest, react-hook-form.
+**Later:** Jest (Step 3), react-hook-form + zod + dayjs (Step 11).
 
 ---
 
@@ -215,4 +271,4 @@ After **every step** this file is updated with:
 - Packages added and why
 - How to run / test the app
 
-*Last updated: September 26, 2026 — Step 1 complete. Next: Step 2 (core libraries).*
+*Last updated: September 26, 2026 — Step 2 complete. Next: Step 3 (Jest + React Testing Library).*
