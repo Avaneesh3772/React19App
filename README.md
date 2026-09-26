@@ -68,6 +68,7 @@ Large banks (including RBC) use a **mix**: Angular/Webpack, React + Next.js, and
 - Emptied the folder (kept `.git`) and scaffolded a new app
 - React **19.3.0** + TypeScript + ESLint + Vite 8
 - Installed `sass` for SCSS
+- Replaced Vite `index.css` / `App.css` with `src/styles/global.scss` and `src/App.scss`
 - Added `npm start` (same habit as Angular)
 - Verified `npm run lint`, `npm run build`, `npm run dev`
 - Landing page works at [http://localhost:5173](http://localhost:5173)
@@ -186,6 +187,22 @@ src/App.tsx         → current landing page (Vite welcome UI)
 ```
 
 Same idea as Angular `index.html` → `main.ts` → `AppComponent`.
+
+### Important files (current codebase)
+
+| File | Role | Angular equivalent |
+|------|------|-------------------|
+| `index.html` | The only HTML page. Contains `<div id="root">` and loads `main.tsx`. | `src/index.html` |
+| `src/main.tsx` | Starts React and mounts `<App />` into `#root`. | `src/main.ts` (`bootstrapApplication`) |
+| `src/App.tsx` | Root component — the landing page you see in the browser. | `AppComponent` |
+| `src/styles/global.scss` | App-wide styles (imported from `main.tsx`). | `src/styles.scss` |
+| `src/App.scss` | Styles for the landing page component. | Component `.scss` |
+| `package.json` | Scripts and dependencies. | Angular `package.json` |
+| `vite.config.ts` | Vite dev server and build settings. | `angular.json` (build/serve) |
+| `tsconfig.app.json` | TypeScript rules for app code. | `tsconfig.app.json` |
+| `eslint.config.js` | Lint rules. | Angular ESLint / `ng lint` |
+| `public/` | Static files (favicon, `icons.svg`) copied as-is. | `public/` |
+| `.gitignore` | Keeps `node_modules` and `dist` out of Git. | `.gitignore` |
 
 ---
 
