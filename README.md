@@ -289,18 +289,21 @@ Done in five parts: **5.1** folders → **5.2** empty pages → **5.3** layout �
 - **No RxJS Learning or Signals Learning** — Angular-only, left out of the menu and routes.
 - Pages are `export function` (named export). Sidebar items with a `path` are links; items with `children` are groups.
 - 404 stays **inside** `AppLayout` (header/sidebar still visible), same as Angular `**`.
-- Guards and lazy routes wait for **Step 12**. Username stays hardcoded until **Step 6**.
+- Guards and lazy routes wait for **Step 12**. Username stays hardcoded until **Step 7**.
 - Vite leftover `#root { text-align: center; width: 1126px }` was removed so the shell is full-width like Angular. The blue frame is Angular’s `DodgerBlue` `.app-container`.
 
 ---
 
-## Step 6 — planned (shared foundation)
+## Step 6 — in progress (shared foundation)
 
-| Will add | Purpose | Angular equivalent |
-|----------|---------|-------------------|
-| `webApiClient` | Shared axios wrapper | `WebApiService` |
-| MUI theme + QueryClient providers | App-wide setup | `app.config.ts` |
-| Business mock JSON | Config / admin / role data | `src/assets/mockData/` |
+| Part | Status | Purpose | Angular equivalent |
+|------|--------|---------|-------------------|
+| **6.1** Mock JSON | **Done** | `public/assets/mockData/` (same filenames) | `src/assets/mockData/` |
+| **6.2** `webApiClient` | **Done** | axios GET/POST/PUT/DELETE, Angular method names | `WebApiService` |
+| **6.3** Theme + Query + `AppProviders` | **Done** | App-wide MUI + React Query | `app.config.ts` |
+| **6.4** Tests + this step’s tables | **Next** | `webApiClient` test + Packages/Files/Commands | — |
+
+Header name from `appConfiguration.json` was **deferred to Step 7** (first real `useQuery`).
 
 ---
 
@@ -361,12 +364,60 @@ Each of these will get the same **Packages / Files / Commands** tables when we f
 ```
 index.html     → <div id="root">
 src/main.tsx   → createRoot(...).render(<App />)
-src/App.tsx    → BrowserRouter → AppRouter
+src/App.tsx    → AppProviders → BrowserRouter → AppRouter
 AppLayout      → Header + Sidebar + Outlet + Footer
 ```
 
-`/` redirects to `/dashboard`. Unknown URLs show Page Not Found inside the same shell.
+`AppProviders` = MUI theme + `CssBaseline` + React Query. `/` redirects to `/dashboard`. Unknown URLs show Page Not Found inside the same shell.
 
 ---
 
-*Last updated: September 27, 2026 — Step 5 complete. Next: Step 6 (webApiClient, theme, mock JSON).*
+## Decisions and learning notes
+
+Standing choices so you can re-read them without scrolling the chat. Step-by-step **Packages / Files / Commands** tables still land when that step is closed (6.4 for Step 6).
+
+### How we work
+
+- Discuss the piece → implement → health check (`lint` / `test` / `build`) → README tables at step close.
+- Small parts (5.1–5.5, 6.1–6.4) when a step is large.
+
+### Components and exports
+
+- **`export function Header()`** for pages and layout — not arrow components. Arrows are for `onClick`, `className={({ isActive }) => …}`, and `.map()`.
+- **Named export** (`import { Sidebar } from './Sidebar'`). `export default` only where the file already used it (`App`).
+- “Functional component” means a function that returns JSX, not “must be an arrow.”
+
+### Routing and sidebar
+
+- `AppLayout` + `<Outlet />` = Angular shell + `router-outlet`.
+- `NavLink` `className={({ isActive }) => (isActive ? 'active' : undefined)}` = `routerLinkActive="active"`.
+- Menu item with `path` = link; item with `children` = group. No `isGroup()` type guard.
+- 404 stays **inside** the shell (header/sidebar still visible).
+- Router tests use `MemoryRouter` + `initialEntries` (test stand-in for `BrowserRouter`).
+- `BrowserRouter` + `<Routes>` (not `createBrowserRouter`) — easier to map from Angular `app.routes.ts`.
+
+### HTTP, theme, mock data
+
+- Vite static files go in **`public/`**. URL `/assets/mockData/appConfiguration.json` matches Angular. Do not put fetchable mocks only under `src/assets/`.
+- `webApiClient` keeps Angular names (`baseHttpGetRequest`, …) and returns a **Promise** of JSON (`response.data`), not an Observable.
+- No `baseURL` yet — local `/assets/...` and `https://jsonplaceholder.typicode.com/...` both work.
+- Auth interceptor and guards = **Step 12**.
+- `queryClient` lives in **`src/app/queryClient.ts`**, not in `AppProviders.tsx` (Fast Refresh).
+- In tests later (Step 7), create a **new** `QueryClient` per test so cache does not leak.
+- Header **Username - Avaneesh Mishra** stays hardcoded until **Step 7**.
+
+### UI / CSS
+
+- Vite leftover `#root { text-align: center; width: 1126px }` was removed so the shell is full-width.
+- Blue frame is Angular’s `DodgerBlue` `.app-container`.
+- `CssBaseline` (6.3) may tighten default margins.
+
+### Enterprise shape (honest)
+
+- Feature folders, `AppProviders`, one HTTP wrapper, React Query for server data = standard enterprise React.
+- Teaching choices: Angular HTTP method names; `<Routes>` instead of `createBrowserRouter`; no `@/` path alias yet.
+- Not done yet: interceptor, env `baseURL`, error boundary, zod, CI gates.
+
+---
+
+*Last updated: September 28, 2026 — Step 6.3 done. Next: Step 6.4 (webApiClient test + Step 6 README tables).*
