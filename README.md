@@ -33,8 +33,8 @@ Reuse Angular CSS class names, service names, and variable names where it helps.
 | **3** | Testing stack (Jest + React Testing Library) | **Complete** |
 | **4** | Health check (`dev`, `lint`, `build`, `test`) | **Complete** |
 | **5** | Folder structure + Header/Footer/Sidebar + empty pages | **Complete** |
-| **6** | Shared foundation (`webApiClient`, theme, mock JSON) | **Next** |
-| **7** | Dashboard module | Pending |
+| **6** | Shared foundation (`webApiClient`, theme, mock JSON) | **Complete** |
+| **7** | Dashboard module | **Next** |
 | **8** | Templates module | Pending |
 | **9** | Restatement module | Pending |
 | **10** | Role module | Pending |
@@ -294,16 +294,51 @@ Done in five parts: **5.1** folders → **5.2** empty pages → **5.3** layout �
 
 ---
 
-## Step 6 — in progress (shared foundation)
+## Step 6 — shared foundation (complete)
 
-| Part | Status | Purpose | Angular equivalent |
-|------|--------|---------|-------------------|
-| **6.1** Mock JSON | **Done** | `public/assets/mockData/` (same filenames) | `src/assets/mockData/` |
-| **6.2** `webApiClient` | **Done** | axios GET/POST/PUT/DELETE, Angular method names | `WebApiService` |
-| **6.3** Theme + Query + `AppProviders` | **Done** | App-wide MUI + React Query | `app.config.ts` |
-| **6.4** Tests + this step’s tables | **Next** | `webApiClient` test + Packages/Files/Commands | — |
+**Goal:** Shared HTTP client, MUI theme, React Query, and Angular mock JSON so later modules can call APIs. Done in four parts: **6.1** JSON → **6.2** `webApiClient` → **6.3** providers → **6.4** test + this README.
 
-Header name from `appConfiguration.json` was **deferred to Step 7** (first real `useQuery`).
+### Packages added
+
+| Package | In one sentence | Angular equivalent |
+|---------|-----------------|-------------------|
+| *(none)* | axios, MUI, and React Query were installed in Step 2 | `HttpClient` + Material + services |
+
+### Files added or changed
+
+| File | Purpose |
+|------|---------|
+| `public/assets/mockData/appConfiguration.json` | User name + roles (header/guards later) |
+| `public/assets/mockData/adminMockData.json` | Admin (Step 11) |
+| `public/assets/mockData/roleMockData.json` | Role (Step 10) |
+| `public/assets/mockData/roleAssignmentList.json` | Role assignment |
+| `public/assets/mockData/roleAssignmentUsersList.json` | Role assignment users |
+| `public/assets/mockData/employeeData.json` | Later modules |
+| `public/assets/mockData/ordersData.json` | Later modules |
+| `public/assets/mockData/artistData.json` | Later modules |
+| `public/assets/mockData/doctorsData.json` | Later modules |
+| `src/shared/api/webApiClient.ts` | axios wrapper — `baseHttpGet/Post/Put/DeleteRequest` |
+| `src/shared/api/webApiClient.test.ts` | GET returns `response.data` (mocked axios, no network) |
+| `src/app/theme/theme.ts` | MUI theme — Roboto, primary `#1976d2` |
+| `src/app/queryClient.ts` | Shared `QueryClient` (own file) |
+| `src/app/AppProviders.tsx` | Theme + React Query + `CssBaseline` |
+| `src/App.tsx` | `AppProviders` → `BrowserRouter` → `AppRouter` |
+
+### Commands
+
+| Command | Result |
+|---------|--------|
+| `npm run lint` | Passed |
+| `npm test` | Passed — 4 tests (shell, 404, Track id, GET unwrap) |
+| `npm run build` | Passed — `dist/` built |
+| `npm run dev` | CQRS shell; mocks at `/assets/mockData/...` |
+
+### Notes
+
+- Mock JSON lives in **`public/`** so the URL matches Angular (`/assets/mockData/...`). Vite does not serve `src/assets/` as a public URL.
+- `webApiClient` keeps Angular method names and returns a **Promise** of the JSON body. No `baseURL` and no auth header yet.
+- Header name from `appConfiguration.json` waits for **Step 7**. Interceptor and guards wait for **Step 12**.
+- See [Decisions and learning notes](#decisions-and-learning-notes) for the longer “why.”
 
 ---
 
@@ -311,7 +346,7 @@ Header name from `appConfiguration.json` was **deferred to Step 7** (first real 
 
 | Step | Module | Planned work |
 |------|--------|----------------|
-| **7** | Dashboard | JSONPlaceholder users table + dialog + tests |
+| **7** | Dashboard | JSONPlaceholder users table + dialog + tests; header name from `appConfiguration.json` |
 | **8** | Templates | Posts CRUD + dialogs + tests |
 | **9** | Restatement | Initiate & Define, Track & Action, `/track/:id` |
 | **10** | Role | Definition tabs + assignment |
@@ -374,7 +409,7 @@ AppLayout      → Header + Sidebar + Outlet + Footer
 
 ## Decisions and learning notes
 
-Standing choices so you can re-read them without scrolling the chat. Step-by-step **Packages / Files / Commands** tables still land when that step is closed (6.4 for Step 6).
+Standing choices so you can re-read them without scrolling the chat. Each completed step also has **Packages / Files / Commands** tables above.
 
 ### How we work
 
@@ -420,4 +455,4 @@ Standing choices so you can re-read them without scrolling the chat. Step-by-ste
 
 ---
 
-*Last updated: September 28, 2026 — Step 6.3 done. Next: Step 6.4 (webApiClient test + Step 6 README tables).*
+*Last updated: September 28, 2026 — Step 6 complete. Next: Step 7 (Dashboard + header name from config).*
