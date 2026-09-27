@@ -32,8 +32,8 @@ Reuse Angular CSS class names, service names, and variable names where it helps.
 | **2** | Core libraries (Router, MUI, axios, React Query) | **Complete** |
 | **3** | Testing stack (Jest + React Testing Library) | **Complete** |
 | **4** | Health check (`dev`, `lint`, `build`, `test`) | **Complete** |
-| **5** | Folder structure + Header/Footer/Sidebar + empty pages | **Next** |
-| **6** | Shared foundation (`webApiClient`, theme, mock JSON) | Pending |
+| **5** | Folder structure + Header/Footer/Sidebar + empty pages | **Complete** |
+| **6** | Shared foundation (`webApiClient`, theme, mock JSON) | **Next** |
 | **7** | Dashboard module | Pending |
 | **8** | Templates module | Pending |
 | **9** | Restatement module | Pending |
@@ -234,14 +234,63 @@ npm test
 
 ---
 
-## Step 5 — planned (empty shell)
+## Step 5 — empty shell (complete)
 
-| Will add | Purpose |
-|----------|---------|
-| `src/app/`, `src/features/`, `src/shared/` | Enterprise folder structure |
-| Header, Footer, Sidebar, AppLayout | Same shell as Angular |
-| Empty pages (`<h2>` only) | Dashboard, Templates, Admin, Role, Restatement |
-| Routes | `/` → `/dashboard`, 404 |
+**Goal:** Feature folders, Header/Footer/Sidebar, empty business pages, and routes so the CQRS layout shows instead of the Vite welcome page.
+
+Done in five parts: **5.1** folders → **5.2** empty pages → **5.3** layout → **5.4** router → **5.5** tests + this README.
+
+### Packages added
+
+| Package | In one sentence | Angular equivalent |
+|---------|-----------------|-------------------|
+| *(none)* | Router and MUI were installed in Step 2 | `@angular/router` already in Angular19App |
+
+### Files added or changed
+
+| File | Purpose |
+|------|---------|
+| `src/features/dashboard/Dashboard.tsx` | Empty `/dashboard` page |
+| `src/features/templates/Templates.tsx` | Empty `/templates` page |
+| `src/features/admin/CloseQuarter.tsx` | Empty close-quarter page |
+| `src/features/admin/LeCalculation.tsx` | Empty LE calculation page |
+| `src/features/admin/RoundingModelCalculation.tsx` | Empty rounding-model page |
+| `src/features/role/RoleDefinition.tsx` | Empty role-definition page |
+| `src/features/role/RoleAssignment.tsx` | Empty role-assignment page |
+| `src/features/restatement/InitiateAndDefine.tsx` | Empty initiate-and-define page |
+| `src/features/restatement/TrackAndAction.tsx` | Empty track-and-action page |
+| `src/features/restatement/Track.tsx` | `/restatement/track/:id` — shows the id |
+| `src/shared/constants/navigation.ts` | Sidebar labels and paths (no RxJS/Signals) |
+| `src/shared/components/layout/Header.tsx` | CQRS title + username |
+| `src/shared/components/layout/Footer.tsx` | Copyright line |
+| `src/shared/components/layout/Sidebar.tsx` | Left menu (`NavLink`) |
+| `src/shared/components/layout/AppLayout.tsx` | Header + sidebar + `<Outlet />` + footer |
+| `src/shared/components/PageNotFound.tsx` | `*` unknown URL |
+| `src/app/router/AppRouter.tsx` | Route table (like `app.routes.ts`) |
+| `src/app/router/AppRouter.test.tsx` | 404 + Track id tests (`MemoryRouter`) |
+| `src/App.tsx` | `BrowserRouter` + `AppRouter` (Vite welcome page removed) |
+| `src/App.test.tsx` | Smoke test: CQRS + Dashboard |
+| `src/styles/global.scss` | Angular shell classes; Vite `#root` centering removed |
+| `src/setupPolyfills.ts` | Jest `TextEncoder` for react-router |
+| `jest.config.ts` | `setupFiles` for the polyfill |
+| `tsconfig.app.json` | Exclude Jest setup files from the app build |
+
+### Commands
+
+| Command | Result |
+|---------|--------|
+| `npm run lint` | Passed |
+| `npm test` | Passed — 3 tests (shell, 404, Track id) |
+| `npm run build` | Passed — `dist/` built |
+| `npm run dev` | CQRS shell at http://localhost:5173/dashboard |
+
+### Notes
+
+- **No RxJS Learning or Signals Learning** — Angular-only, left out of the menu and routes.
+- Pages are `export function` (named export). Sidebar items with a `path` are links; items with `children` are groups.
+- 404 stays **inside** `AppLayout` (header/sidebar still visible), same as Angular `**`.
+- Guards and lazy routes wait for **Step 12**. Username stays hardcoded until **Step 6**.
+- Vite leftover `#root { text-align: center; width: 1126px }` was removed so the shell is full-width like Angular. The blue frame is Angular’s `DodgerBlue` `.app-container`.
 
 ---
 
@@ -310,11 +359,14 @@ Each of these will get the same **Packages / Files / Commands** tables when we f
 ## How the app boots (today)
 
 ```
-index.html       → <div id="root">
-src/main.tsx     → createRoot(...).render(<App />)
-src/App.tsx      → Vite landing page (“Get started”)
+index.html     → <div id="root">
+src/main.tsx   → createRoot(...).render(<App />)
+src/App.tsx    → BrowserRouter → AppRouter
+AppLayout      → Header + Sidebar + Outlet + Footer
 ```
+
+`/` redirects to `/dashboard`. Unknown URLs show Page Not Found inside the same shell.
 
 ---
 
-*Last updated: September 26, 2026 — Step 4 complete. Next: Step 5 (folder structure + empty shell).*
+*Last updated: September 27, 2026 — Step 5 complete. Next: Step 6 (webApiClient, theme, mock JSON).*
