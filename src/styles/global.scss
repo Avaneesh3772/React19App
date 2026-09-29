@@ -207,6 +207,10 @@ code {
   cursor: default;
 }
 
+.page-container .app-table tbody .app-table-row {
+  cursor: pointer;
+}
+
 .page-container .app-table .app-table-row th {
   font-size: 14px;
   font-weight: bold;

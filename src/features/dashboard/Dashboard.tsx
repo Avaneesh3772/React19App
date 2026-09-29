@@ -1,64 +1,71 @@
+import { useState } from 'react'
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined'
 import { CircularProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
 import { DashboardConstants } from './dashboard.constants'
 import type { UserList } from './dashboard.models'
-import { getUsersList } from './dashboard.service'
-
-const columnLabels: Record<(typeof DashboardConstants.displayedColumns)[number], string> = {
-  id: 'ID',
-  name: 'Name',
-  username: 'Username',
-  email: 'Email',
-  phone: 'Phone',
-}
+import { DialogUserInfo } from './DialogUserInfo'
+import { useUsersList } from './useUsersList'
 
 export function Dashboard() {
-  const usersQuery = useQuery({
-    queryKey: ['dashboard', 'users'],
-    queryFn: getUsersList,
-  })
+  const { usersListData, isPending, isError, error } = useUsersList()
+  const [selectedUser, setSelectedUser] = useState<UserList | null>(null)
+
+  const isEmptyResponse = usersListData && usersListData.length === 0
+  const isResponseValid = usersListData && usersListData.length > 0
 
   return (
     <div className="page-container">
       <h2 className="page-title">Dashboard</h2>
 
-      {usersQuery.isPending && (
+      {isPending && (
         <div className="loading-icon-position">
           <CircularProgress size={30} />
           <p>Loading...</p>
         </div>
       )}
 
-      {usersQuery.isError && (
+      {isError && (
         <p className="error-message">
           <ErrorOutlinedIcon fontSize="small" />
-          {usersQuery.error instanceof Error ? usersQuery.error.message : 'Failed to load users'}
+          {error instanceof Error ? error.message : 'Failed to load users'}
         </p>
       )}
 
-      {usersQuery.data && (
+      {isEmptyResponse && <p>There are no users to display.</p>}
+
+      {isResponseValid && (
         <Table className="app-table">
           <TableHead>
             <TableRow className="app-table-row">
-              {DashboardConstants.displayedColumns.map((column) => (
-                <TableCell key={column} component="th">
-                  {columnLabels[column]}
+              {DashboardConstants.userTableColumns.map((column) => (
+                <TableCell key={column.key} component="th">
+                  {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {usersQuery.data.map((user) => (
-              <TableRow key={user.id} className="app-table-row">
-                {DashboardConstants.displayedColumns.map((column) => (
-                  <TableCell key={column}>{user[column as keyof UserList] as string | number}</TableCell>
+            {usersListData.map((user) => (
+              <TableRow
+                key={user.id}
+                className="app-table-row"
+                hover
+                onClick={() => setSelectedUser(user)}
+              >
+                {DashboardConstants.userTableColumns.map((column) => (
+                  <TableCell key={column.key}>{user[column.key]}</TableCell>
                 ))}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
+
+      <DialogUserInfo
+        userInfo={selectedUser}
+        open={selectedUser !== null}
+        onClose={() => setSelectedUser(null)}
+      />
     </div>
   )
 }
